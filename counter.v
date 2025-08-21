@@ -1,4 +1,4 @@
-module top (
+module counter (
     input wire clk_1Hz, rst_n, en_1,
     input wire adjust_sec, up_sec, down_sec,
     input wire adjust_min, up_min, down_min,
