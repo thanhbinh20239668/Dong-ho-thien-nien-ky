@@ -35,10 +35,10 @@ hour isHour (
     .select_item(select_item), .carry_in(c_min2hour), .hour_bin(hour_bin), .carry_out(c_hour2day)
 );
 
-day #(.SELECT_DAY(SELECT_DAY)) isDay (
+day isDay (
     .clk_1Hz(clk_1Hz), .rst_n(rst_n), .en_1(en_1), .up(up), .down(down),
     .select_item(select_item), .carry_in(c_hour2day), .day_bin(day_bin), .carry_out(c_day2month),
-    .month_bin(month_bin), .year_bin(year_bin), .leap_year(leap_year)
+    .month_bin(month_bin), .leap_year(leap_year)
 );
 
 month isMonth (

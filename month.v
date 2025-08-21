@@ -13,37 +13,34 @@ always @(posedge clk_1Hz or negedge rst_n) begin
         month_bin <= 4'd1;
         carry_out <= 1'b0;
     end
-    else if (en_1 && carry_in && (select_item != SELECT_MONTH)) begin
-        if (month_bin == 4'd12) begin
-            month_bin <= 4'd1;
-            carry_out <= 1'b1;
+    else begin
+        if (select_item == SELECT_MONTH) begin //chỉnh
+            if (up) begin
+                if (month_bin == 4'd12)
+                    month_bin <= 4'd1;
+                else
+                    month_bin <= month_bin + 1'b1;
+            end
+            else if (down) begin
+                if (month_bin == 4'd1)
+                    month_bin <= 4'd12;
+                else
+                    month_bin <= month_bin - 1'b1;
+            end
+            carry_out <= 1'b0; //Không tạo carry khi chỉnh tay
+        end
+        else if (en_1 && carry_in) begin //đếm
+            if (month_bin == 4'd12) begin
+                month_bin <= 4'd1;
+                carry_out <= 1'b1;
+            end
+            else begin
+                month_bin <= month_bin + 1'b1;
+                carry_out <= 1'b0;
+            end
         end
         else begin
-            month_bin <= month_bin + 1'b1;
             carry_out <= 1'b0;
-        end
-    end
-    else begin
-        carry_out <= 1'b0;
-    end
-end
-
-always @(posedge up or posedge down or negedge rst_n) begin
-    if (!rst_n) begin
-        month_bin <= 4'd1;
-    end
-    else if (select_item == SELECT_MONTH) begin
-        if (up) begin
-            if (month_bin == 4'd12)
-            month_bin <= 4'd1;
-            else
-            month_bin <= month_bin + 1'b1;
-        end
-        else if (down) begin
-            if (month_bin == 4'd1)
-            month_bin <= 4'd12;
-            else 
-            month_bin <= month_bin - 1'b1;
         end
     end
 end

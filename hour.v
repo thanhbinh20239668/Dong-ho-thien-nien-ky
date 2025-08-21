@@ -13,7 +13,22 @@ always @(posedge clk_1Hz or negedge rst_n) begin
         hour_bin <= 5'd0;
         carry_out <= 1'b0;
     end
-    else if (en_1 && carry_in && (select_item != SELECT_HOUR)) begin
+    else if (select_item == SELECT_HOUR) begin //chỉnh
+        if (up) begin
+            if (hour_bin == 5'd23)
+                hour_bin <= 5'd0;
+            else
+                hour_bin <= hour_bin + 1'b1;
+        end
+        else if (down) begin
+            if (hour_bin == 5'd0)
+                hour_bin <= 5'd23;
+            else
+                hour_bin <= hour_bin - 1'b1;
+        end
+        carry_out <= 1'b0; //Không tạo carry khi chỉnh
+    end
+    else if (en_1 && carry_in) begin //đếm
         if (hour_bin == 5'd23) begin
             hour_bin <= 5'd0;
             carry_out <= 1'b1;
@@ -23,28 +38,8 @@ always @(posedge clk_1Hz or negedge rst_n) begin
             carry_out <= 1'b0;
         end
     end
-    else begin 
+    else begin
         carry_out <= 1'b0;
-    end
-end
-
-always @(posedge up or posedge down or negedge rst_n) begin
-    if (!rst_n) begin
-        hour_bin <= 5'd0;
-    end
-    else if (select_item == SELECT_HOUR) begin
-        if (up) begin
-            if (hour_bin == 5'd23)
-            hour_bin <= 5'd0;
-            else 
-            hour_bin <= hour_bin + 1'b1;
-        end
-        else if (down) begin
-            if (hour_bin == 5'd0)
-            hour_bin <= 5'd23;
-            else
-            hour_bin <= hour_bin - 1'b1;
-        end
     end
 end
 endmodule

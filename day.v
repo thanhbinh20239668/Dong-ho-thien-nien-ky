@@ -25,7 +25,22 @@ always @(posedge clk_1Hz or negedge rst_n) begin
         day_bin <= 5'd1;
         carry_out <= 1'b0;
     end
-    else if (en_1 && carry_in && (select_item != SELECT_DAY)) begin
+    else if (select_item == SELECT_DAY) begin //chỉnh
+        if (up) begin
+            if (day_bin == max_day)
+                day_bin <= 5'd1;
+            else
+                day_bin <= day_bin + 1'b1;
+        end
+        else if (down) begin
+            if (day_bin == 5'd1)
+                day_bin <= max_day;
+            else
+                day_bin <= day_bin - 1'b1;
+        end
+        carry_out <= 1'b0; //Không tạo carry khi chỉnh tay
+    end
+    else if (en_1 && carry_in) begin //đếm
         if (day_bin == max_day) begin
             day_bin <= 5'd1;
             carry_out <= 1'b1;
@@ -37,26 +52,6 @@ always @(posedge clk_1Hz or negedge rst_n) begin
     end
     else begin
         carry_out <= 1'b0;
-    end
-end
-
-always @(posedge up or posedge down or negedge rst_n) begin
-    if (!rst_n) begin
-        day_bin <= 5'd1;
-    end
-    else if (select_item == SELECT_DAY) begin
-        if (up) begin
-            if (day_bin == max_day)
-            day_bin <= 5'd1;
-            else 
-            day_bin <= day_bin + 1'b1;
-        end
-        else if (down) begin
-            if (day_bin == 6'd1)
-            day_bin <= max_day;
-            else
-            day_bin <= day_bin - 1'b1;
-        end
     end
 end
 endmodule
