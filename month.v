@@ -5,7 +5,7 @@ module month #(
     input wire [2:0] select_item, // chọn thành phần để chỉnh 100: tháng, ...
     input wire carry_in,
     output reg [3:0] month_bin,
-    output reg carry_out
+    output reg carry_out //báo tràn sang năm
 );
 
 always @(posedge clk_1Hz or negedge rst_n) begin
