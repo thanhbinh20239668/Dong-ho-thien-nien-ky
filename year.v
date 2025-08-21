@@ -1,9 +1,10 @@
 module year #(
+    parameter SELECT_YEAR = 3'b101
     parameter YEAR_MIN = 12'd2001,
     parameter YEAR_MAX = 12'd3000
 )(
     input wire clk_1Hz, rst_n, en_1, up, down,
-    input wire adjust, //0: đếm, 1: chỉnh
+    input wire [2:0] select_item, // chọn thành phần để chỉnh 101: năm, ...
     input wire carry_in,
     output reg [11:0] year_bin
 );
@@ -12,7 +13,7 @@ always @(posedge clk_1Hz or negedge rst_n) begin
     if (!rst_n) begin
         year_bin <= YEAR_MIN;
     end
-    else if (en_1 && carry_in && !adjust) begin
+    else if (en_1 && carry_in && (select_item != SELECT_YEAR)) begin
         if (year_bin == YEAR_MAX)
         year_bin <= YEAR_MIN;
         else 
@@ -24,7 +25,7 @@ always @(posedge up or posedge down or negedge rst_n) begin
     if (!rst_n) begin
         year_bin <= YEAR_MIN;
     end
-    else if (adjust) begin
+    else if (select_item == SELECT_YEAR) begin
         if (up) begin
             if (year_bin == YEAR_MAX)
             year_bin <= YEAR_MIN;
