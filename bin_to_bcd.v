@@ -7,46 +7,71 @@ module bin_to_bcd (
     output reg [15:0] bcd_yyyy
 );
 //double dabble algorithm
-function [7:0] bin8_to_bcd;
-input [7:0] bin;
+reg [19:0] shift8; //3 nibble + 8-bit bin
+reg [35:0] shift16; // 5 nibble + 16-bit bin
 integer i;
-reg [19:0] shift; //3 nibble + 8-bit bin
-begin
-    shift = 20'd0;
-    shift[7:0] = bin;
-    for (i = 0; i < 8; i = i + 1) begin
-        if (shift[11:8] >= 5) shift[11:8] = shift[11:8] + 3;
-        if (shift[15:12] >= 5) shift[15:12] = shift[15:12] + 3;
-        shift = shift << 1;
-    end
-    bin8_to_bcd = shift[15:8];
-end
-endfunction
-
-function [15:0] bin16_to_bcd;
-input [15:0] bin;
-integer i;
-reg [35:0] shift; //5 nibble + 16-bit bin
-begin
-    shift = 36'd0;
-    shift[15:0] = bin;
-    for (i = 0; i < 16; i = i + 1) begin
-        if (shift[19:16] >= 5) shift[19:16] = shift[19:16] + 3;
-        if (shift[23:20] >= 5) shift[23:20] = shift[23:20] + 3;
-        if (shift[27:24] >= 5) shift[27:24] = shift[27:24] + 3;
-        if (shift[31:28] >= 5) shift[31:28] = shift[31:28] + 3;
-        shift = shift << 1;
-    end
-    bin16_to_bcd = shift[31:16];
-end
-endfunction 
 
 always @(sec_bin or min_bin or hour_bin or day_bin or month_bin or year_bin) begin
-    bcd_ss = bin8_to_bcd(sec_bin);
-    bcd_mm = bin8_to_bcd(min_bin);
-    bcd_hh = bin8_to_bcd(hour_bin);
-    bcd_dd = bin8_to_bcd(day_bin);
-    bcd_mo = bin8_to_bcd(month_bin);
-    bcd_yyyy = bin16_to_bcd(year_bin);
+    //chuyển đổi giây
+    shift8 = 0;
+    shift8[7:0] = sec_bin;
+    for (i = 0; i < 8; i = i + 1) begin
+        if (shift8[11:8] >= 5) shift8[11:8] = shift8[11:8] + 3;
+        if (shift8[15:12] >= 5) shift8[15:12] = shift8[15:12] + 3;
+        shift8 = shift8 << 1;
+    end
+    bcd_ss = shift8[15:8];
+
+    //chuyển đổi phút
+    shift8 = 0;
+    shift8[7:0] = min_bin;
+    for (i = 0; i < 8; i = i + 1) begin
+        if (shift8[11:8] >= 5) shift8[11:8] = shift8[11:8] + 3;
+        if (shift8[15:12] >= 5) shift8[15:12] = shift8[15:12] + 3;
+        shift8 = shift8 << 1;
+    end
+    bcd_mm = shift8[15:8];
+
+    //chuyển đổi giờ
+    shift8 = 0;
+    shift8[7:0] = hour_bin;
+    for (i = 0; i < 8; i = i + 1) begin
+        if (shift8[11:8] >= 5) shift8[11:8] = shift8[11:8] + 3;
+        if (shift8[15:12] >= 5) shift8[15:12] = shift8[15:12] + 3;
+        shift8 = shift8 << 1;
+    end
+    bcd_hh = shift8[15:8];
+
+    //chuyển đổi ngày
+    shift8 = 0;
+    shift8[7:0] = day_bin;
+    for (i = 0; i < 8; i = i + 1) begin
+        if (shift8[11:8] >= 5) shift8[11:8] = shift8[11:8] + 3;
+        if (shift8[15:12] >= 5) shift8[15:12] = shift8[15:12] + 3;
+        shift8 = shift8 << 1;
+    end
+    bcd_dd = shift8[15:8];
+
+    //chuyển đổi tháng
+    shift8 = 0;
+    shift8[7:0] = month_bin;
+    for (i = 0; i < 8; i = i + 1) begin
+        if (shift8[11:8] >= 5) shift8[11:8] = shift8[11:8] + 3;
+        if (shift8[15:12] >= 5) shift8[15:12] = shift8[15:12] + 3;
+        shift8 = shift8 << 1;
+    end
+    bcd_mo = shift8[15:8];
+
+    //chuyển đổi năm
+    shift16 = 0;
+    shift16[11:0] = year_bin;
+    for (i = 0; i < 12; i = i + 1) begin
+        if (shift16[19:16] >= 5) shift16[19:16] = shift16[19:16] + 3;
+        if (shift16[23:20] >= 5) shift16[23:20] = shift16[23:20] + 3;
+        if (shift16[27:24] >= 5) shift16[27:24] = shift16[27:24] + 3;
+        if (shift16[31:28] >= 5) shift16[31:28] = shift16[31:28] + 3;
+        shift16 = shift16 << 1;
+    end
+    bcd_yyyy = shift16[31:16];
 end
 endmodule

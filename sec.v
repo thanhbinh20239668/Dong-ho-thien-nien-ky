@@ -13,7 +13,7 @@ always @(posedge clk_1Hz or negedge rst_n) begin
         carry_out <= 1'b0;
     end
     else begin
-        carry_out <= 1'b0;
+        carry_out <= 1'b0; //reset mặc định
         if (select_item == SELECT_SEC) begin //chỉnh
             if (up) begin
                 if (sec_bin == 6'd59)
