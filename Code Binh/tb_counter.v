@@ -13,7 +13,7 @@ module tb_counter;
     wire [7:0] bcd_ss, bcd_mm, bcd_hh, bcd_dd, bcd_mo;
     wire [15:0] bcd_yyyy;
 
-    // Instantiate the Unit Under Test (UUT)
+    // Instantiate DUT
     counter uut (
         .clk_1Hz(clk_1Hz),
         .rst_n(rst_n),
@@ -28,33 +28,34 @@ module tb_counter;
         .bcd_yyyy(bcd_yyyy)
     );
 
-    // Clock generation (fast clock for simulation)
+    // Clock generation (siêu nhanh)
     initial clk_1Hz = 0;
-    always #1 clk_1Hz = ~clk_1Hz; // 2ns period = "1Hz" nhanh cho simulation
-
-    // Test sequence
+    always #0.001 clk_1Hz = ~clk_1Hz; // Chu kỳ = 0.002 ns
     initial begin
-        // Initialize inputs
+        // Reset
         rst_n = 0;
-        up = 0;
-        down = 0;
-        select_item = 3'd7;
+        up = 1; down = 0; select_item = 3'b111;
+        #1 rst_n = 1;
 
-        // Apply reset
-        #5 rst_n = 1;
-
-        // Run simulation for 60 "seconds" (60 cycles of clk_1Hz)
-        // 1 cycle = 2ns, muốn 60 giây = 60 * 2ns * 2 (toggling clk) = 240ns
-        #240;
-
-        // Finish simulation
-        $stop;
+        $display("Simulation bắt đầu: kiểm tra leap year và đến năm 2012.");
     end
 
-    // Monitor outputs
+    // Hiển thị khi vào tháng 2/2008
+    always @(posedge clk_1Hz) begin
+        if (uut.bcd_yyyy == 2008 && uut.bcd_mo == 2) begin
+            $display(">>> Đang ở tháng 2 năm 2008. Ngày: %0d/%0d/%0d", uut.bcd_dd, uut.bcd_mo, uut.bcd_yyyy);
+        end
+
+        if (uut.bcd_yyyy >= 2012) begin
+            $display(">>> Đến năm 2012. Ngày: %0d/%0d/%0d", uut.bcd_dd, uut.bcd_mo, uut.bcd_yyyy);
+            $stop; // Dừng mô phỏng tại đây
+        end
+    end
+
+    // Dump waveform cho ModelSim hoặc GTKWave
     initial begin
-        $display("Time(ns) | SS | MM | HH");
-        $monitor("%0t | %0d | %0d | %0d", $time, bcd_ss, bcd_mm, bcd_hh);
+        $dumpfile("counter_tb.vcd");
+        $dumpvars(0, tb_counter);
     end
 
 endmodule

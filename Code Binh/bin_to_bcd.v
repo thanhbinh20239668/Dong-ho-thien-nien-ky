@@ -66,12 +66,12 @@ always @(sec_bin or min_bin or hour_bin or day_bin or month_bin or year_bin) beg
     shift16 = 0;
     shift16[11:0] = year_bin;
     for (i = 0; i < 12; i = i + 1) begin
+        if (shift16[15:12] >= 5) shift16[15:12] = shift16[15:12] + 3;
         if (shift16[19:16] >= 5) shift16[19:16] = shift16[19:16] + 3;
         if (shift16[23:20] >= 5) shift16[23:20] = shift16[23:20] + 3;
         if (shift16[27:24] >= 5) shift16[27:24] = shift16[27:24] + 3;
-        if (shift16[31:28] >= 5) shift16[31:28] = shift16[31:28] + 3;
         shift16 = shift16 << 1;
     end
-    bcd_yyyy = shift16[31:16];
+    bcd_yyyy = shift16[27:12];
 end
 endmodule
