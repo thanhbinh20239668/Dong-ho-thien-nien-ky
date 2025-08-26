@@ -1,6 +1,6 @@
 module year #(
-    parameter SELECT_YEAR = 3'b101;
-    parameter YEAR_MIN = 12'd2001;
+    parameter SELECT_YEAR = 3'b101,
+    parameter YEAR_MIN = 12'd2001,
     parameter YEAR_MAX = 12'd3000
 )(
     input wire clk_1Hz, rst_n, en_1, up, down,

@@ -1,8 +1,8 @@
 module counter (
-    input wire clk_1Hz, rst_n, en_1, up, down,
+    input wire clk_1Hz, rst_n, up, down,
     input wire [2:0] select_item,
-    output reg [7:0] bcd_ss, bcd_mm, bcd_hh, bcd_dd, bcd_mo,
-    output reg [15:0] bcd_yyyy
+    output wire [7:0] bcd_ss, bcd_mm, bcd_hh, bcd_dd, bcd_mo,
+    output wire [15:0] bcd_yyyy
 );
 
 wire [5:0] sec_bin, min_bin;
@@ -14,6 +14,8 @@ wire c_min2hour;
 wire c_hour2day;
 wire c_day2month;
 wire c_month2year;
+
+wire en_1 = 1;
 
 leap_year isLeap (
     .year_bin(year_bin),
