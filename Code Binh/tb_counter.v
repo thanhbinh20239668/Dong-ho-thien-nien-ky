@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module tb_counter_60s;
+module tb_counter;
 
     // Inputs
     reg clk_1Hz;
